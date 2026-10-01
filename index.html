@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor AMV Workin' - 4shared Style</title>
+    <link rel="icon" type="image/x-icon" href="fav.ico">
+    <meta name="description" content="Converta qualquer vídeo para .AMV ou .AVI direto no navegador, compatível com players MP4 antigos.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Top Bar Estilo 2009 -->
+    <div id="top-bar">
+        <div class="container top-flex">
+            <div class="logo-area">
+                <span class="logo-text">AMV Converter <span class="retro-badge">Retro 2009</span></span>
+            </div>
+            <div class="top-links">
+                <span>Ferramenta Estática &bull; Workin'Store</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Principal -->
+    <header id="header">
+        <div class="container header-flex">
+            <div class="brand">
+                <h1>📁 AMV<span>Share</span> Tools</h1>
+                <p class="tagline">O conversor definitivo para seus players MP4 antigos</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Menu / Navegação simulada 2009 -->
+    <nav id="nav-bar">
+        <div class="container">
+            <ul>
+                <li><a href="#" id="navConverter" class="active">Conversor de Vídeo</a></li>
+                <li><a href="#" id="navPlayer">Player</a></li>
+                <li><a href="#" onclick="alert('Ferramenta 100% Client-Side para conversão de vídeos para os formatos .AMV e .AVI de MP4 Players.'); return false;">Sobre</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <main class="container main-content">
+
+      <!-- ============ VISÃO: CONVERSOR ============ -->
+      <section id="view-converter">
+
+        <!-- Caixa de Boas-Vindas -->
+        <div class="welcome-box">
+            <h2>Tem um MP4 antigo e não tem onde achar os vídeos pra ele?</h2>
+            <p>Então joga qualquer formato de vídeo aqui e converte ele para seu MP4 player em AMV ou AVI com total compatibilidade!</p>
+        </div>
+
+        <!-- Painel Principal de Conversão -->
+        <div class="panel">
+            <div class="panel-header">
+                <h3>Área de Upload e Configuração</h3>
+            </div>
+            <div class="panel-body">
+
+                <!-- Área de Drag and Drop -->
+                <div id="drop-zone" class="drop-zone">
+                    <div class="drop-icon">📥</div>
+                    <p class="drop-title">Arraste seu arquivo de vídeo aqui</p>
+                    <p class="drop-sub">ou clique para selecionar do computador (MP4, AVI, MKV, WebM, MOV, etc.)</p>
+                    <input type="file" id="fileInput" accept="video/*" style="display: none;">
+                    <div id="fileInfo" class="file-info" style="display: none;">
+                        <strong>Arquivo selecionado:</strong> <span id="fileName"></span>
+                    </div>
+                </div>
+
+                <!-- Configurações Avançadas de AMV -->
+                <div class="config-section">
+                    <h4>⚙️ Configurações Essenciais para AMV / AVI</h4>
+
+                    <div class="config-grid">
+                        <div class="config-item">
+                            <label for="format">Formato de Saída:</label>
+                            <select id="format">
+                                <option value="amv" selected>.AMV (MP4 players clássicos)</option>
+                                <option value="avi">.AVI (MP4 players novos - MJPEG)</option>
+                            </select>
+                        </div>
+
+                        <div class="config-item">
+                            <label for="resolution">Resolução de Tela:</label>
+                            <select id="resolution">
+                                <option value="160x128" selected>160 x 128 (Padrão MP4 Player 1.8")</option>
+                                <option value="128x128">128 x 128 (Tela Quadrada)</option>
+                                <option value="128x96">128 x 96 (Baixa Resolução / Mini)</option>
+                                <option value="220x176">220 x 176 (Telas Maiores 2.4")</option>
+                                <option value="320x240">320 x 240 (Players mais novos)</option>
+                            </select>
+                        </div>
+
+                        <div class="config-item">
+                            <label for="aspect">Aspect Ratio (Proporção):</label>
+                            <select id="aspect">
+                                <option value="keep" selected>Manter Proporção (com bordas pretas se necessário)</option>
+                                <option value="stretch">Esticar para preencher a tela</option>
+                            </select>
+                        </div>
+
+                        <div class="config-item">
+                            <label for="fps">Taxa de Quadros (FPS):</label>
+                            <select id="fps">
+                                <option value="15" selected>15 fps (Recomendado para AMV fluído)</option>
+                                <option value="10">10 fps (Compatibilidade máxima / arquivo menor)</option>
+                                <option value="14">14 fps</option>
+                                <option value="18">18 fps</option>
+                                <option value="21">21 fps</option>
+                                <option value="25">25 fps (Mais fluído, arquivo maior)</option>
+                                <option value="30">30 fps (Experimental)</option>
+                            </select>
+                        </div>
+
+                        <div class="config-item">
+                            <label for="quality">Qualidade de Imagem:</label>
+                            <select id="quality">
+                                <option value="6" selected>Padrão (equilíbrio tamanho/qualidade)</option>
+                                <option value="3">Alta (arquivo maior)</option>
+                                <option value="10">Econômica (arquivo bem leve)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p class="config-note">O áudio é sempre mono em 22.050 Hz. O .AVI usa vídeo MJPEG + áudio IMA ADPCM, a mesma base do AMV, garantindo compatibilidade com os MP4 players que leem AVI.</p>
+                </div>
+
+                <!-- Botão de Ação -->
+                <div class="action-bar">
+                    <button id="convertBtn" class="btn-4shared" disabled>Carregando motor...</button>
+                </div>
+
+                <!-- Status e Progresso -->
+                <div id="progressContainer" class="progress-container" style="display: none;">
+                    <div class="status-text" id="statusText">Aguardando arquivo...</div>
+                    <div class="progress-bar-bg">
+                        <div id="progressBar" class="progress-bar-fill"></div>
+                    </div>
+                </div>
+
+                <!-- Resultado de Download -->
+                <div id="resultContainer" class="result-container" style="display: none;">
+                    <p>✅ Conversão concluída com sucesso!</p>
+                    <p class="result-size" id="resultSize"></p>
+                    <a id="downloadLink" class="btn-download" download="video_convertido.amv">Baixar Arquivo</a>
+                    <button id="playResultBtn" type="button" class="btn-secondary">▶ Assistir no Player</button>
+                </div>
+
+                <details class="log-details">
+                    <summary>Registro técnico (avançado)</summary>
+                    <pre id="logBox" class="log-box" style="display:none;"></pre>
+                </details>
+
+            </div>
+        </div>
+      </section>
+
+      <!-- ============ VISÃO: PLAYER ============ -->
+      <section id="view-player" style="display:none;">
+
+        <div class="welcome-box">
+            <h2>Player de vídeo .AMV</h2>
+            <p>Assista aos arquivos convertidos nesta sessão (guardados na memória do navegador) ou abra qualquer vídeo do seu computador, em .AMV ou qualquer outro formato.</p>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <h3>Reprodutor</h3>
+            </div>
+            <div class="panel-body">
+
+                <div class="config-section">
+                    <h4>🗂️ Convertidos nesta sessão (memória RAM)</h4>
+                    <ul id="sessionList" class="session-list">
+                        <li class="session-empty">Nenhum vídeo convertido ainda nesta sessão.</li>
+                    </ul>
+                </div>
+
+                <div class="config-section">
+                    <h4>💻 Abrir arquivo do computador</h4>
+                    <div id="player-drop-zone" class="drop-zone">
+                        <div class="drop-icon">🎬</div>
+                        <p class="drop-title">Arraste um vídeo aqui para assistir</p>
+                        <p class="drop-sub">ou clique para selecionar (.amv, .mp4, .avi, .mkv, .mov, .webm, etc.)</p>
+                        <input type="file" id="playerFileInput" accept="video/*,.amv" style="display:none;">
+                    </div>
+                </div>
+
+                <div id="playerStatus" class="status-text player-status" style="display:none;"></div>
+                <div id="playerProgressContainer" class="progress-container" style="display:none;">
+                    <div class="progress-bar-bg">
+                        <div id="playerProgressBar" class="progress-bar-fill"></div>
+                    </div>
+                </div>
+
+                <div class="player-stage">
+                    <video id="videoPlayer" class="video-player" controls playsinline></video>
+                    <p id="nowPlaying" class="now-playing"></p>
+                </div>
+
+                <p class="config-note">Arquivos .AMV não são suportados nativamente pelos navegadores: eles são decodificados aqui mesmo, no seu computador, para poderem ser exibidos. Nada é enviado para servidores.</p>
+
+            </div>
+        </div>
+      </section>
+
+        <!-- Disclaimer Legal Solicitado -->
+        <div class="disclaimer-box">
+            <p><strong>Aviso Legal (Disclaimer):</strong> Este site não armazena, disponibiliza ou distribui conteúdos protegidos por direitos autorais de terceiros. A plataforma fornece exclusivamente uma ferramenta client-side de conversão de arquivos para uso pessoal e privado do usuário.</p>
+        </div>
+
+    </main>
+
+    <!-- Rodapé Estilo 2009 -->
+    <footer id="footer">
+        <div class="container">
+            <p>&copy; 2009-2026 AMV Converter Tools. Todos os direitos reservados. Workin'Store.</p>
+        </div>
+    </footer>
+
+    <!-- Motor FFmpeg.wasm 0.12 (não exige SharedArrayBuffer) -->
+    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+    <script src="https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
