@@ -6,8 +6,9 @@
 
 const FFMPEG_VER = '0.12.10';
 const CORE_VER = '0.12.6';
-const BASE_FF = `https://unpkg.com/@ffmpeg/ffmpeg@${FFMPEG_VER}/dist/umd`;
-const BASE_CORE = `https://unpkg.com/@ffmpeg/core@${CORE_VER}/dist/esm`;
+// Motor hospedado junto com o site (pasta ffmpeg/), sem depender de CDN
+const BASE_FF = new URL('ffmpeg/', location.href).href.replace(/\/$/, '');
+const BASE_CORE = BASE_FF;
 
 const { FFmpeg } = FFmpegWASM;
 const { fetchFile, toBlobURL } = FFmpegUtil;
@@ -119,7 +120,7 @@ async function initFFmpeg() {
     await ffmpeg.load({
       coreURL: `${BASE_CORE}/ffmpeg-core.js`,
       wasmURL: `${BASE_CORE}/ffmpeg-core.wasm`,
-      classWorkerURL: await toBlobURL(`${BASE_FF}/814.ffmpeg.js`, 'text/javascript'),
+      classWorkerURL: `${BASE_FF}/814.ffmpeg.js`,
     });
     isFFmpegReady = true;
     setStatus('Motor pronto. Selecione um vídeo e clique em Converter.');
@@ -497,3 +498,8 @@ async function playBlob(blob, name) {
 }
 
 renderSessionList();
+
+// Guarda o motor no navegador para não baixar de novo nas próximas visitas
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
