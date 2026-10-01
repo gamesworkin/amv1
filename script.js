@@ -117,9 +117,17 @@ async function initFFmpeg() {
   try {
     setStatus('Carregando motor de conversão (alguns segundos na primeira vez)...');
     setProgress(5);
+    // O wasm fica comprimido (.gz, ~10 MB) para caber no limite de 25 MB do
+    // GitHub. Aqui ele é baixado e descomprimido no navegador antes de carregar.
+    const gzRes = await fetch(`${BASE_CORE}/ffmpeg-core.wasm.gz`);
+    if (!gzRes.ok) throw new Error('Falha ao baixar ffmpeg-core.wasm.gz');
+    const wasmBlob = await new Response(
+      gzRes.body.pipeThrough(new DecompressionStream('gzip'))
+    ).blob();
+    const wasmURL = URL.createObjectURL(wasmBlob);
     await ffmpeg.load({
       coreURL: `${BASE_CORE}/ffmpeg-core.js`,
-      wasmURL: `${BASE_CORE}/ffmpeg-core.wasm`,
+      wasmURL,
       classWorkerURL: `${BASE_FF}/814.ffmpeg.js`,
     });
     isFFmpegReady = true;
