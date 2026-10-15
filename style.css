@@ -486,3 +486,26 @@ body {
     font-size: 11px;
     color: #333;
 }
+
+/* Opção Remover faixas pretas */
+.crop-bars-option {
+    margin-top: 6px;
+    font-weight: bold;
+    font-size: 11px;
+    color: #1a4585;
+    cursor: pointer;
+}
+.crop-bars-option input { vertical-align: middle; margin-right: 4px; }
+.crop-bars-option small { display: block; font-weight: normal; color: #666; margin-left: 18px; }
+
+/* Ajustar duração */
+.trim-preview { text-align: center; margin-bottom: 10px; }
+.trim-video { max-width: 480px; }
+.trim-note { font-size: 11px; color: #666; font-style: italic; }
+.trim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.trim-grid input[type=range] { width: 100%; margin: 4px 0; }
+.trim-inputs { font-size: 11px; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.trim-inputs input[type=number] { width: 52px; font-size: 11px; padding: 2px; }
+.trim-summary { font-size: 11px; color: #333; margin: 10px 0 6px; }
+.trim-summary strong { color: #1a4585; }
+.trim-actions { display: flex; gap: 6px; flex-wrap: wrap; }

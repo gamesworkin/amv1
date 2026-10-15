@@ -67,9 +67,43 @@
                     <div class="drop-icon">📥</div>
                     <p class="drop-title">Arraste seu arquivo de vídeo aqui</p>
                     <p class="drop-sub">ou clique para selecionar do computador (MP4, AVI, MKV, WebM, MOV, etc.)</p>
-                    <input type="file" id="fileInput" accept="video/*" style="display: none;">
+                    <input type="file" id="fileInput" accept="video/*,.avi,.amv,.mkv,.flv,.wmv,.3gp,.mpg,.mpeg,.vob,.ts" style="display: none;">
                     <div id="fileInfo" class="file-info" style="display: none;">
                         <strong>Arquivo selecionado:</strong> <span id="fileName"></span>
+                    </div>
+                </div>
+
+                <!-- Ajustar duração -->
+                <div id="trimSection" class="config-section trim-section" style="display:none;">
+                    <h4>✂️ Ajustar duração</h4>
+                    <div class="trim-preview">
+                        <video id="trimVideo" class="video-player trim-video" controls preload="metadata"></video>
+                        <p id="trimNoPreview" class="trim-note" style="display:none;">Este formato não tem prévia no navegador, mas o corte funciona normalmente.</p>
+                    </div>
+                    <div class="trim-grid">
+                        <div class="config-item">
+                            <label for="trimStart">Cortar do início:</label>
+                            <input type="range" id="trimStartRange" min="0" max="0" step="1" value="0">
+                            <div class="trim-inputs">
+                                <input type="number" id="trimStartMin" min="0" value="0"> min
+                                <input type="number" id="trimStartSec" min="0" max="59" value="0"> s
+                                <button type="button" id="trimSetStart" class="btn-secondary">Usar posição atual</button>
+                            </div>
+                        </div>
+                        <div class="config-item">
+                            <label for="trimEnd">Cortar do fim:</label>
+                            <input type="range" id="trimEndRange" min="0" max="0" step="1" value="0">
+                            <div class="trim-inputs">
+                                <input type="number" id="trimEndMin" min="0" value="0"> min
+                                <input type="number" id="trimEndSec" min="0" max="59" value="0"> s
+                                <button type="button" id="trimSetEnd" class="btn-secondary">Usar posição atual</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="trim-summary">Duração original: <strong id="trimOrig">--:--</strong> &bull; Trecho mantido: <strong id="trimRange">--:--</strong> &bull; Nova duração: <strong id="trimNew">--:--</strong></p>
+                    <div class="trim-actions">
+                        <button type="button" id="trimPreviewBtn" class="btn-secondary">▶ Ver trecho cortado</button>
+                        <button type="button" id="trimResetBtn" class="btn-secondary">Desfazer corte</button>
                     </div>
                 </div>
 
@@ -82,7 +116,8 @@
                             <label for="format">Formato de Saída:</label>
                             <select id="format">
                                 <option value="amv" selected>.AMV (MP4 players clássicos)</option>
-                                <option value="avi">.AVI (MP4 players novos - MJPEG)</option>
+                                <option value="avi">.AVI MJPEG (MP4 players novos)</option>
+                                <option value="xvid">.AVI XviD (players que leem AVI/XviD)</option>
                             </select>
                         </div>
 
@@ -94,6 +129,8 @@
                                 <option value="128x96">128 x 96 (Baixa Resolução / Mini)</option>
                                 <option value="220x176">220 x 176 (Telas Maiores 2.4")</option>
                                 <option value="320x240">320 x 240 (Players mais novos)</option>
+                                <option value="128x160">128 x 160 (Tela em pé / vídeo vertical)</option>
+                                <option value="120x160">120 x 160 (Tela em pé / vídeo vertical)</option>
                             </select>
                         </div>
 
@@ -102,6 +139,30 @@
                             <select id="aspect">
                                 <option value="keep" selected>Manter Proporção (com bordas pretas se necessário)</option>
                                 <option value="stretch">Esticar para preencher a tela</option>
+                                <option value="fill">Preencher sem distorcer (corta as sobras)</option>
+                                <option value="vertical">Vídeo vertical (9:16, centralizado em pé)</option>
+                            </select>
+                            <label id="cropBarsWrap" class="crop-bars-option" for="cropBars" style="display:none;">
+                                <input type="checkbox" id="cropBars"> Remover faixas pretas
+                                <small>(corta barras laterais ou no topo/rodapé, deixando só o vídeo)</small>
+                            </label>
+                        </div>
+
+                        <div class="config-item">
+                            <label for="rotate">Rotacionar vídeo:</label>
+                            <select id="rotate">
+                                <option value="none" selected>Não rotacionar</option>
+                                <option value="cw">90° sentido horário ↻</option>
+                                <option value="ccw">90° sentido anti-horário ↺</option>
+                                <option value="180">180° (de cabeça para baixo)</option>
+                            </select>
+                        </div>
+
+                        <div class="config-item">
+                            <label for="profile">Perfil do player:</label>
+                            <select id="profile">
+                                <option value="custom" selected>Personalizado</option>
+                                <option value="yp3">MP4 player YP3 (configuração recomendada)</option>
                             </select>
                         </div>
 
@@ -127,7 +188,7 @@
                             </select>
                         </div>
                     </div>
-                    <p class="config-note">O áudio é sempre mono em 22.050 Hz. O .AVI usa vídeo MJPEG + áudio IMA ADPCM, a mesma base do AMV, garantindo compatibilidade com os MP4 players que leem AVI.</p>
+                    <p class="config-note">O áudio é sempre mono em 22.050 Hz. O .AVI usa vídeo MJPEG + áudio IMA ADPCM, a mesma base do AMV, garantindo compatibilidade com os MP4 players que leem AVI. O .AVI XviD usa vídeo MPEG-4 (FourCC XVID, sem B-frames) + áudio MP3 mono. O perfil YP3 ajusta tudo automaticamente para o software de vídeo desses players.</p>
                 </div>
 
                 <!-- Botão de Ação -->
@@ -187,7 +248,7 @@
                         <div class="drop-icon">🎬</div>
                         <p class="drop-title">Arraste um vídeo aqui para assistir</p>
                         <p class="drop-sub">ou clique para selecionar (.amv, .mp4, .avi, .mkv, .mov, .webm, etc.)</p>
-                        <input type="file" id="playerFileInput" accept="video/*,.amv" style="display:none;">
+                        <input type="file" id="playerFileInput" accept="video/*,.amv,.avi" style="display:none;">
                     </div>
                 </div>
 
