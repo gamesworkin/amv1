@@ -156,18 +156,21 @@ async function initFFmpeg() {
 
 document.getElementById('format').addEventListener('change', updateButton);
 
-/* ---------- Perfil YP3: AMV 160x128, 15 fps, mono 22050 Hz ---------- */
-const YP3 = { format: 'amv', resolution: '160x128', fps: '15', quality: '6' };
-document.getElementById('profile').addEventListener('change', (e) => {
-  if (e.target.value !== 'yp3') return;
-  for (const [id, v] of Object.entries(YP3)) document.getElementById(id).value = v;
+/* ---------- Perfil YP3: AVI MJPEG 128x160, 90° horário, 20 fps,
+   espelho horizontal, áudio WAV s16le 22050 Hz estéreo (campos travados) ---------- */
+const YP3 = { format: 'avi', resolution: '128x160', rotate: 'cw', fps: '20', flip: 'h' };
+const profileSel = document.getElementById('profile');
+function applyProfile() {
+  const on = profileSel.value === 'yp3';
+  for (const [id, v] of Object.entries(YP3)) {
+    const el = document.getElementById(id);
+    if (on) el.value = v;
+    el.disabled = on;
+  }
   updateButton();
-});
-['format', 'resolution', 'fps', 'quality'].forEach((id) =>
-  document.getElementById(id).addEventListener('change', () => {
-    const p = document.getElementById('profile');
-    if (p.value === 'yp3' && document.getElementById(id).value !== YP3[id]) p.value = 'custom';
-  }));
+}
+profileSel.addEventListener('change', applyProfile);
+function isYP3() { return profileSel.value === 'yp3'; }
 
 /* ---------- opção "Remover faixas pretas" (só com Esticar) ---------- */
 const aspectSel = document.getElementById('aspect');
@@ -366,6 +369,7 @@ convertBtn.addEventListener('click', async () => {
     const aspectMode = document.getElementById('aspect').value;
     const stretch = aspectMode === 'stretch';
     const rot = { cw: 'transpose=1,', ccw: 'transpose=2,', '180': 'hflip,vflip,' }[document.getElementById('rotate').value] || '';
+    const flip = { h: 'hflip,', v: 'vflip,', hv: 'hflip,vflip,' }[document.getElementById('flip').value] || '';
     const fps = document.getElementById('fps').value;
     const quality = document.getElementById('quality').value;
 
@@ -391,7 +395,7 @@ convertBtn.addEventListener('click', async () => {
       geo = `${rot}crop='min(iw,ih*9/16)':'min(ih,iw*16/9)',scale=${w}:${h}:force_original_aspect_ratio=decrease,${pad}`;
     } else geo = `${rot}scale=${w}:${h}:force_original_aspect_ratio=decrease,${pad}`;
     const pixFmt = format === 'xvid' ? 'yuv420p' : 'yuvj420p';
-    const vf = `${geo},setsar=1,fps=${fps},format=${pixFmt}`;
+    const vf = `${geo},${flip}setsar=1,fps=${fps},format=${pixFmt}`;
 
     setStatus('Convertendo vídeo...');
     setProgress(10);
@@ -427,6 +431,13 @@ convertBtn.addEventListener('click', async () => {
         '-vtag', 'MJPG',
         '-max_muxing_queue_size', '1024',
       ];
+      if (isYP3()) {
+        // YP3: áudio obrigatoriamente WAV PCM s16le 22050 Hz estéreo 2.0 (sem fallback de codec)
+        code = await ffmpeg.exec(vBase.concat([
+          '-c:a', 'pcm_s16le', '-ar', '22050', '-ac', '2',
+          '-f', 'avi', '-y', outputName,
+        ]));
+      } else {
       code = await ffmpeg.exec(vBase.concat([
         '-c:a', 'adpcm_ima_wav', '-ar', '22050', '-ac', '1',
         '-f', 'avi', '-y', outputName,
@@ -442,6 +453,7 @@ convertBtn.addEventListener('click', async () => {
       if (code !== 0) {
         log('>> Tentando novamente sem áudio (fallback)...');
         code = await ffmpeg.exec(vBase.concat(['-an', '-f', 'avi', '-y', outputName]));
+      }
       }
     } else {
       const args = [

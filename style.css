@@ -509,3 +509,10 @@ body {
 .trim-summary { font-size: 11px; color: #333; margin: 10px 0 6px; }
 .trim-summary strong { color: #1a4585; }
 .trim-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* Campos travados pelo perfil YP3 */
+select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-image: none;
+}

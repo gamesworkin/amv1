@@ -159,6 +159,16 @@
                         </div>
 
                         <div class="config-item">
+                            <label for="flip">Inverter / Espelhar vídeo:</label>
+                            <select id="flip">
+                                <option value="none" selected>Não inverter</option>
+                                <option value="h">Horizontal (espelhar ⇆)</option>
+                                <option value="v">Vertical (de ponta-cabeça ⇅)</option>
+                                <option value="hv">Horizontal + Vertical</option>
+                            </select>
+                        </div>
+
+                        <div class="config-item">
                             <label for="profile">Perfil do player:</label>
                             <select id="profile">
                                 <option value="custom" selected>Personalizado</option>
@@ -173,6 +183,7 @@
                                 <option value="10">10 fps (Compatibilidade máxima / arquivo menor)</option>
                                 <option value="14">14 fps</option>
                                 <option value="18">18 fps</option>
+                                <option value="20">20 fps</option>
                                 <option value="21">21 fps</option>
                                 <option value="25">25 fps (Mais fluído, arquivo maior)</option>
                                 <option value="30">30 fps (Experimental)</option>
@@ -188,7 +199,7 @@
                             </select>
                         </div>
                     </div>
-                    <p class="config-note">O áudio é sempre mono em 22.050 Hz. O .AVI usa vídeo MJPEG + áudio IMA ADPCM, a mesma base do AMV, garantindo compatibilidade com os MP4 players que leem AVI. O .AVI XviD usa vídeo MPEG-4 (FourCC XVID, sem B-frames) + áudio MP3 mono. O perfil YP3 ajusta tudo automaticamente para o software de vídeo desses players.</p>
+                    <p class="config-note">O áudio é sempre mono em 22.050 Hz. O .AVI usa vídeo MJPEG + áudio IMA ADPCM, a mesma base do AMV, garantindo compatibilidade com os MP4 players que leem AVI. O .AVI XviD usa vídeo MPEG-4 (FourCC XVID, sem B-frames) + áudio MP3 mono. O perfil YP3 trava: .AVI MJPEG, 128 x 160, rotação 90° horário, 20 fps, espelhamento horizontal e áudio WAV PCM s16le 22.050 Hz estéreo 2.0 (proporção e qualidade continuam livres).</p>
                 </div>
 
                 <!-- Botão de Ação -->
