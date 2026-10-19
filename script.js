@@ -158,7 +158,7 @@ document.getElementById('format').addEventListener('change', updateButton);
 
 /* ---------- Perfil YP3: AVI MJPEG 128x160, 90° horário, 20 fps,
    espelho horizontal, áudio WAV s16le 22050 Hz estéreo (campos travados) ---------- */
-const YP3 = { format: 'avi', resolution: '128x160', rotate: 'cw', fps: '20', flip: 'h' };
+const YP3 = { format: 'avi', resolution: '128x160', rotate: 'cw', fps: '20', flip: 'h', audio: 'yp3' };
 const profileSel = document.getElementById('profile');
 function applyProfile() {
   const on = profileSel.value === 'yp3';
@@ -431,29 +431,18 @@ convertBtn.addEventListener('click', async () => {
         '-vtag', 'MJPG',
         '-max_muxing_queue_size', '1024',
       ];
-      if (isYP3()) {
-        // YP3: áudio obrigatoriamente WAV PCM s16le 22050 Hz estéreo 2.0 (sem fallback de codec)
-        code = await ffmpeg.exec(vBase.concat([
-          '-c:a', 'pcm_s16le', '-ar', '22050', '-ac', '2',
-          '-f', 'avi', '-y', outputName,
-        ]));
-      } else {
+      // Áudio do AVI MJPEG: WAV PCM s16le 22050 Hz, Mono (Padrão) ou Stereo (YP3).
+      // No perfil YP3 o áudio fica travado em Stereo.
+      const audioMode = isYP3() ? 'yp3' : document.getElementById('audio').value;
+      const channels = audioMode === 'yp3' ? '2' : '1';
+      log(`>> Áudio: ${audioMode === 'yp3' ? 'YP3 (Stereo, WAV s16le, 22050khz)' : 'Padrão (Mono, WAV s16le, 22050khz)'}`);
       code = await ffmpeg.exec(vBase.concat([
-        '-c:a', 'adpcm_ima_wav', '-ar', '22050', '-ac', '1',
+        '-c:a', 'pcm_s16le', '-ar', '22050', '-ac', channels,
         '-f', 'avi', '-y', outputName,
       ]));
-      if (code !== 0) {
-        log('>> Tentando novamente com áudio PCM (fallback)...');
-        setStatus('Ajustando parâmetros e tentando novamente...');
-        code = await ffmpeg.exec(vBase.concat([
-          '-c:a', 'pcm_s16le', '-ar', '22050', '-ac', '1',
-          '-f', 'avi', '-y', outputName,
-        ]));
-      }
-      if (code !== 0) {
+      if (code !== 0 && !isYP3()) {
         log('>> Tentando novamente sem áudio (fallback)...');
         code = await ffmpeg.exec(vBase.concat(['-an', '-f', 'avi', '-y', outputName]));
-      }
       }
     } else {
       const args = [
